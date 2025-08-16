@@ -186,7 +186,7 @@ const Dashboard = {
       .pet-image { width: 200px; height: auto; z-index: 1; animation: float 2.5s ease-in-out infinite; position: absolute; }
       .accessory-image { position: absolute; z-index: 2; }
       .ball-image { width: 70px; bottom: 10px; right: 250px; }
-      .bowl-image { width: 150px; bottom: 10px; left: 250px; }
+      .bowl-image { width: 100px; bottom: 10px; left: 250px; }
       @keyframes float { 0% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-5px) scale(1.03); } 100% { transform: translateY(0px) scale(1); } }
     `;
     document.head.appendChild(style);

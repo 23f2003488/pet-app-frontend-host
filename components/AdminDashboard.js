@@ -318,298 +318,144 @@ const AdminDashboard = {
     await this.fetchShopItems();
     this.pageLoading = false;
 
-    const style = document.createElement('style');
-    style.textContent = `
-      .initial-page-loader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #f4f7f6;
-        font-size: 1.5rem;
-        color: #777;
-        font-family: sans-serif;
-        z-index: 9999;
-      }
-      :root {
-        --primary-color: #4A90E2;
-        --primary-dark: #357ABD;
-        --background-color: #f4f7f6;
-        --card-background: #ffffff;
-        --text-color: #333;
-        --text-light: #777;
-        --border-color: #ddd;
-        --danger-color: #D0021B;
-        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        --border-radius: 8px;
-      }
-      .admin-container {
-    padding: 20px;
-    background-color: var(--background-color);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    color: var(--text-color);
-    min-height: 100vh;
-}
-
-.admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.admin-header h2 {
-    color: var(--primary-dark);
-}
-
-.back-to-dash-btn {
-    background: var(--text-light);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.back-to-dash-btn:hover {
-    background: #555;
-}
-
-.admin-tabs {
-    margin-bottom: 25px;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.admin-tabs button {
-    padding: 10px 20px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    font-size: 1rem;
-    color: var(--text-light);
-    border-bottom: 3px solid transparent;
-    transform: translateY(2px);
-}
-
-.admin-tabs button.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.admin-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.loading-indicator {
-    text-align: center;
-    padding: 40px;
-    font-size: 1.2rem;
-    color: var(--text-light);
-}
-
-.admin-card {
-    background: var(--card-background);
-    padding: 15px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    display: flex;
-    flex-direction: column;
-}
-
-.admin-card p {
-    margin: 4px 0;
-}
-
-.card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.shop-card-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 10px;
-}
-
-.shop-item-img {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
-    padding: 5px;
-}
-
-.card-actions {
-    margin-top: auto;
-    padding-top: 15px;
-    display: flex;
-    gap: 10px;
-    border-top: 1px solid var(--border-color);
-}
-
-.card-actions button {
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    border: 1px solid var(--border-color);
-    background: #f9f9f9;
-    transition: all 0.2s;
-}
-
-.card-actions .edit-btn:hover {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-}
-
-.card-actions .delete-btn {
-    color: var(--danger-color);
-    border-color: var(--danger-color);
-}
-
-.card-actions .delete-btn:hover {
-    background: var(--danger-color);
-    color: white;
-}
-
-.add-new-btn {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.add-new-btn:hover {
-    background-color: var(--primary-dark);
-}
-
-.modal-backdrop {
+   const style = document.createElement('style');
+style.textContent = `
+  .initial-page-loader {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-}
+    background-color: #f4f7f6;
+    font-size: 1.5rem;
+    color: #777;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    z-index: 9999;
+  }
+  :root {
+    --primary-color: #9b59b6;   /* purple */
+    --primary-dark: #8e44ad;
+    --background-color: #fafafa;
+    --card-background: #ffffff;
+    --text-color: #222;
+    --text-light: #666;
+    --border-color: #b57edc;    /* softer purple border */
+    --danger-color: #e74c3c;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --border-radius: 8px;
+  }
+  .admin-container {
+    padding: 20px;
+    background-color: var(--background-color);
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    color: var(--text-color);
+    min-height: 100vh;
+  }
 
-.modal-content {
+  .admin-header h2 {
+    color: var(--primary-dark);
+  }
+
+  .back-to-dash-btn {
+    background: var(--text-light);
+    color: white;
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .admin-tabs {
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .admin-tabs button {
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-light);
+    background: transparent;
+  }
+
+  .admin-tabs button.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
+  .admin-card {
+    background: var(--card-background);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .shop-item-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    padding: 5px;
+  }
+
+  .card-actions {
+    margin-top: auto;
+    padding-top: 15px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .card-actions button {
+    border: 1px solid var(--border-color);
+    background: #f9f9f9;
+  }
+
+  .card-actions .delete-btn {
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+  }
+
+  .add-new-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-dark);
+  }
+
+  .modal-content {
     background: white;
     padding: 25px;
     border-radius: var(--border-radius);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-}
+    border: 2px solid var(--border-color);
+  }
 
-.modal-content h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: var(--primary-dark);
-}
-
-.form-input {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
+  .form-input {
     border: 1px solid var(--border-color);
     border-radius: 5px;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+  }
 
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.modal-actions button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.cancel-btn {
-    background: #eee;
-}
-
-.save-btn {
-    background: var(--primary-color);
-    color: white;
-}
-
-.save-btn:disabled {
-    background: var(--primary-dark);
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-.option-input-group {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 5px;
-}
-
-.remove-option-btn {
+  .remove-option-btn {
     background: var(--danger-color);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    cursor: pointer;
-    font-weight: bold;
-}
+    border: 1px solid var(--danger-color);
+  }
 
-.add-option-btn {
+  .add-option-btn {
     background: #e0e0e0;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 5px;
-}
-    `;
-    document.head.appendChild(style);
+    border: 1px solid var(--border-color);
+  }
+`;
+document.head.appendChild(style);
 
-    this.isReady = true;
+this.isReady = true;
+
   }
 };
