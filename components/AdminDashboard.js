@@ -177,7 +177,7 @@ const AdminDashboard = {
     async fetchQuestions() {
       try {
         const token = localStorage.getItem("accessToken");
-        const response = await fetch("https://iitmod-lifeskills.onrender.com/api/v1/questions/get", {
+        const response = await fetch("https://iitmod-lifeskills.onrender.com/api/v1/admin/question/get", {
           headers: { "Authorization": `Bearer ${token}` }
         });
         if (!response.ok) throw new Error("Could not fetch questions.");
