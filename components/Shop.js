@@ -129,53 +129,59 @@ const Shop = {
         
         const equippedCostumeId = localStorage.getItem('equippedCostumeId');
         const equippedThemeId = localStorage.getItem('equippedThemeId');
+        // FIX 1: Also get the equippedCollarId to check the button status
+        const equippedCollarId = localStorage.getItem('equippedCollarId');
+        const equippedOverlayGifts = JSON.parse(localStorage.getItem('equippedOverlayGifts')) || [];
+        const equippedOverlayGiftIds = equippedOverlayGifts.map(gift => gift.id);
 
         this.categories = Object.keys(shopData).map(categoryName => {
           let items = shopData[categoryName];
+          if (categoryName === 'Gifts' || categoryName === 'Theme') {
+            items.sort((a, b) => a.xp_price - b.xp_price);
+          }
 
           if (categoryName === 'Accessories') {
             const accessoryGroups = {};
-            const fullAccessoryList = items.map(item => ({
-              ...item,
-              quantity: inventoryMap[item.id]?.quantity || 0,
-              inventory_id: inventoryMap[item.id]?.inventory_id,
-            }));
-            
+            const fullAccessoryList = items.map(item => ({...item, quantity: inventoryMap[item.id]?.quantity || 0, inventory_id: inventoryMap[item.id]?.inventory_id }));
             fullAccessoryList.forEach(item => {
               const groupName = item.name.split(' ')[1];
-              if (!accessoryGroups[groupName]) {
-                accessoryGroups[groupName] = [];
-              }
+              if (!accessoryGroups[groupName]) accessoryGroups[groupName] = [];
               accessoryGroups[groupName].push(item);
             });
-            
             items = Object.keys(accessoryGroups).map(groupName => {
               const variants = accessoryGroups[groupName];
               const userOwnsOneInGroup = variants.some(v => v.quantity > 0);
-              return {
-                isGroup: true,
-                id: groupName,
-                groupName: groupName,
-                variants: variants,
-                selectedVariantId: variants[0]?.id,
-                userOwnsOne: userOwnsOneInGroup
-              };
+              return { isGroup: true, id: groupName, groupName: groupName, variants: variants, selectedVariantId: variants[0]?.id, userOwnsOne: userOwnsOneInGroup };
             });
-          }
-
-          if (categoryName === 'Gifts' || categoryName === 'Theme') {
-            items.sort((a, b) => a.xp_price - b.xp_price);
           }
 
           return {
             name: categoryName,
             items: items.map(item => {
               if (item.isGroup) return item;
+
+              let isEquipped = false;
+              if (item.category === 'Costumes') {
+                isEquipped = item.id === equippedCostumeId;
+              } else if (item.category === 'Gifts' || item.category === 'Theme') {
+                const isBackgroundGift = item.name === 'Castle' || item.name === 'Space';
+                const isCollarGift = item.name === 'Golden Collar';
+
+                if (isBackgroundGift) {
+                  isEquipped = item.id === equippedThemeId;
+                } else if (isCollarGift) {
+                  // FIX 2: Check against the equippedCollarId
+                  isEquipped = item.id === equippedCollarId;
+                } else {
+                  isEquipped = equippedOverlayGiftIds.includes(item.id);
+                }
+              }
+              
               return {
                 ...item,
                 quantity: inventoryMap[item.id]?.quantity || 0,
                 inventory_id: inventoryMap[item.id]?.inventory_id,
-                is_equipped: item.id === equippedCostumeId || item.id === equippedThemeId,
+                is_equipped: isEquipped,
                 isUnlocked: (item.category === 'Gifts' || item.category === 'Theme') ? this.userXP >= item.xp_price : true
               }
             })
@@ -199,7 +205,6 @@ const Shop = {
           headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
           body: JSON.stringify({ item_id: item.id, quantity: 1 })
         });
-
         if (res.ok) {
           alert(`You successfully bought ${item.name}!`);
           await this.fetchShopItems();
@@ -224,10 +229,13 @@ const Shop = {
         });
         if (res.ok) {
           alert(`You used 1 ${item.name}.`);
-          
-          // FIX: Updated logic to only affect the specific accessory type
           if (item.category === 'Accessories') {
+            localStorage.removeItem('equippedCostumeId');
+            localStorage.removeItem('equippedCostumeUrl');
+            localStorage.removeItem('equippedCollarId'); // Also clear gift collar
+            localStorage.removeItem('equippedCollarUrl');
             if (item.name.includes('Collar')) {
+              localStorage.setItem('equippedCollarId', item.id);
               localStorage.setItem('equippedCollarUrl', item.image_url);
             } else if (item.name.includes('Ball')) {
               localStorage.setItem('equippedBallUrl', item.image_url);
@@ -235,7 +243,6 @@ const Shop = {
               localStorage.setItem('equippedBowlUrl', item.image_url);
             }
           }
-
           await this.fetchShopItems();
         } else {
           const errData = await res.json();
@@ -249,15 +256,32 @@ const Shop = {
     },
     async equipItem(item) {
       if (item.category === 'Costumes') {
-        localStorage.removeItem('equippedCollarUrl'); // Unequip competing items
+        localStorage.removeItem('equippedCollarId');
+        localStorage.removeItem('equippedCollarUrl');
         localStorage.setItem('equippedCostumeId', item.id);
         localStorage.setItem('equippedCostumeUrl', item.image_url);
       } 
       else if (item.category === 'Gifts' || item.category === 'Theme') {
-        localStorage.setItem('equippedThemeId', item.id);
-        localStorage.setItem('equippedThemeUrl', item.image_url);
+        const isBackgroundGift = item.name === 'Castle' || item.name === 'Space';
+        const isCollarGift = item.name === 'Golden Collar';
+
+        if (isBackgroundGift) {
+          localStorage.setItem('equippedThemeId', item.id);
+          localStorage.setItem('equippedThemeUrl', item.image_url);
+        } else if (isCollarGift) {
+          localStorage.removeItem('equippedCostumeId');
+          localStorage.removeItem('equippedCostumeUrl');
+          // FIX 3: Set both ID and URL for the Golden Collar
+          localStorage.setItem('equippedCollarId', item.id);
+          localStorage.setItem('equippedCollarUrl', item.image_url);
+        } else {
+          let overlayGifts = JSON.parse(localStorage.getItem('equippedOverlayGifts')) || [];
+          if (!overlayGifts.some(gift => gift.id === item.id)) {
+            overlayGifts.push({ id: item.id, url: item.image_url, name: item.name });
+          }
+          localStorage.setItem('equippedOverlayGifts', JSON.stringify(overlayGifts));
+        }
       }
-      
       alert(`${item.name} has been equipped!`);
       await this.fetchShopItems();
     },
@@ -267,8 +291,21 @@ const Shop = {
         localStorage.removeItem('equippedCostumeUrl');
       } 
       else if (item.category === 'Gifts' || item.category === 'Theme') {
-        localStorage.removeItem('equippedThemeId');
-        localStorage.removeItem('equippedThemeUrl');
+        const isBackgroundGift = item.name === 'Castle' || item.name === 'Space';
+        const isCollarGift = item.name === 'Golden Collar';
+
+        if (isBackgroundGift) {
+          localStorage.removeItem('equippedThemeId');
+          localStorage.removeItem('equippedThemeUrl');
+        } else if (isCollarGift) {
+           // FIX 4: Remove both ID and URL for the Golden Collar
+           localStorage.removeItem('equippedCollarId');
+           localStorage.removeItem('equippedCollarUrl');
+        } else {
+          let overlayGifts = JSON.parse(localStorage.getItem('equippedOverlayGifts')) || [];
+          const updatedGifts = overlayGifts.filter(gift => gift.id !== item.id);
+          localStorage.setItem('equippedOverlayGifts', JSON.stringify(updatedGifts));
+        }
       }
       alert(`${item.name} has been unequipped.`);
       await this.fetchShopItems();
@@ -281,37 +318,213 @@ const Shop = {
     this.fetchShopItems();
     const style = document.createElement('style');
     style.textContent = `
-      .shop-container { padding: 40px; background-color: #fff3e0; font-family: 'Comic Sans MS', cursive; min-height: 100vh; }
-      h2 { text-align: center; color: #ef6c00; margin-bottom: 30px; }
-      .shop-section { margin-bottom: 40px; }
-      .shop-section h3 { color: #fb8c00; margin-bottom: 10px; font-size: 1.3rem; }
-      .scroll-container { position: relative; display: flex; align-items: center; }
-      .scroll-btn { background-color: #ffa726; color: white; border: none; padding: 10px 15px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); z-index: 1; }
-      .scroll-btn:hover { transform: scale(1.1); }
-      .items-wrapper { display: flex; overflow-x: auto; margin: 0 10px; padding: 10px; background: #fff; border-radius: 20px; gap: 15px; flex-wrap: nowrap; }
-      .item-card { min-width: 130px; background-color: #ffe0b2; border-radius: 15px; text-align: center; padding: 10px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); flex-shrink: 0; }
-      .item-card img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 8px; }
-      .item-name { font-weight: bold; margin-top: 5px; margin-bottom: 5px; }
-      .effects-box { font-size: 0.75rem; color: #6d4c41; margin-bottom: 8px; font-weight: bold; min-height: 14px; }
-      .effects-box span { margin: 0 4px; }
-      .price-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; min-height: 25px; }
-      .coin-price, .xp-price { padding: 4px 8px; border-radius: 8px; font-size: 0.9rem; }
-      .coin-price { background: #ffecb3; }
-      .xp-price { background: #bbdefb; }
-      .shop-button { background-color: #4db6ac; color: white; border: none; padding: 6px 14px; margin: 4px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); transition: transform 0.2s ease-in-out; }
-      .shop-button:hover { transform: scale(1.15); }
-      .shop-button:disabled { background-color: #ccc; color: #666; cursor: not-allowed; }
-      .equip-button { background-color: #42a5f5; }
-      .unequip-button { background-color: #ef5350; }
-      .locked-button { background-color: #9e9e9e; color: #fff; cursor: not-allowed; }
-      .submit-button { display: block; margin: 40px auto 0; background-color: #8e24aa; color: white; padding: 12px 24px; border: none; border-radius: 30px; font-size: 1rem; cursor: pointer; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); }
-      .submit-button:hover { transform: scale(1.05); }
-      .loader { text-align: center; font-size: 1.2rem; margin-top: 50px; color: #8e24aa; }
-      .button-container { margin-top: 5px; min-height: 40px; }
-      .quantity-display { font-size: 0.8rem; font-weight: bold; color: #d84315; margin-bottom: 5px; }
-      .food-buttons { display: flex; justify-content: center; gap: 5px; }
-      .food-buttons .shop-button { padding: 5px 10px; font-size: 0.75rem; }
-      .variant-select { width: 100%; padding: 5px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; margin-bottom: 5px; font-family: 'Comic Sans MS', cursive; }
+      .shop-container {
+    padding: 40px;
+    background-color: #fff3e0;
+    font-family: 'Comic Sans MS', cursive;
+    min-height: 100vh;
+}
+
+h2 {
+    text-align: center;
+    color: #ef6c00;
+    margin-bottom: 30px;
+}
+
+.shop-section {
+    margin-bottom: 40px;
+}
+
+.shop-section h3 {
+    color: #fb8c00;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.scroll-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.scroll-btn {
+    background-color: #ffa726;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.scroll-btn:hover {
+    transform: scale(1.1);
+}
+
+.items-wrapper {
+    display: flex;
+    overflow-x: auto;
+    margin: 0 10px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 20px;
+    gap: 15px;
+    flex-wrap: nowrap;
+}
+
+.item-card {
+    min-width: 130px;
+    background-color: #ffe0b2;
+    border-radius: 15px;
+    text-align: center;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+
+.item-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.item-name {
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.effects-box {
+    font-size: 0.75rem;
+    color: #6d4c41;
+    margin-bottom: 8px;
+    font-weight: bold;
+    min-height: 14px;
+}
+
+.effects-box span {
+    margin: 0 4px;
+}
+
+.price-box {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    min-height: 25px;
+}
+
+.coin-price,
+.xp-price {
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.coin-price {
+    background: #ffecb3;
+}
+
+.xp-price {
+    background: #bbdefb;
+}
+
+.shop-button {
+    background-color: #4db6ac;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    margin: 4px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease-in-out;
+}
+
+.shop-button:hover {
+    transform: scale(1.15);
+}
+
+.shop-button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.equip-button {
+    background-color: #42a5f5;
+}
+
+.unequip-button {
+    background-color: #ef5350;
+}
+
+.locked-button {
+    background-color: #9e9e9e;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+.submit-button {
+    display: block;
+    margin: 40px auto 0;
+    background-color: #8e24aa;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.submit-button:hover {
+    transform: scale(1.05);
+}
+
+.loader {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 50px;
+    color: #8e24aa;
+}
+
+.button-container {
+    margin-top: 5px;
+    min-height: 40px;
+}
+
+.quantity-display {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #d84315;
+    margin-bottom: 5px;
+}
+
+.food-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.food-buttons .shop-button {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+}
+
+.variant-select {
+    width: 100%;
+    padding: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-family: 'Comic Sans MS', cursive;
+}
     `;
     document.head.appendChild(style);
   }

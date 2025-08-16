@@ -77,7 +77,7 @@ const ProgressTracker = {
         if (!resProg.ok) throw new Error("Progress request failed");
         this.progress = await resProg.json();
 
-        const resTxns = await fetch("https://iitmod-lifeskills.onrender.com/api/v1/transactions/get?limit=100&skip=50", {
+        const resTxns = await fetch("https://iitmod-lifeskills.onrender.com/api/v1/transactions/get?limit=100", {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!resTxns.ok) throw new Error("Transactions request failed");
