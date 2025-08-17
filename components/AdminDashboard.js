@@ -197,7 +197,7 @@ const AdminDashboard = {
         const data = await response.json();
         this.shopItems = Object.values(data).flat();
       } catch (error) {
-        alert(error.message);
+        ///alert(error.message);
       }
     },
     openAddQuestionModal() {
