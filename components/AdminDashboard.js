@@ -56,7 +56,7 @@ const AdminDashboard = {
                     <p v-else><strong>Price:</strong> Coin {{ item.money_price }}</p>
 
                     <p><strong>Effects:</strong> Hunger: {{ item.hunger_effect }} | Happiness: {{ item.happiness_effect }}</p>
-                    <p><strong>Equipable:</strong> {{ item.equipable ? 'Yes' : 'No' }}</p>
+                   
                     <div class="card-actions">
                         <button class="edit-btn" @click="openEditItemModal(item)"> Edit</button>
                         <button class="delete-btn" @click="deleteItem(item.id)"> Delete</button>
@@ -117,7 +117,10 @@ const AdminDashboard = {
                 <input class="form-input" v-model.number="itemForm.hunger_effect" placeholder="Hunger Effect" type="number" />
                 <input class="form-input" v-model.number="itemForm.happiness_effect" placeholder="Happiness Effect" type="number" />
                 <input class="form-input" v-model="itemForm.image_url" placeholder="Image URL" />
-                
+                <label class="checkbox-label">
+                    <input type="checkbox" v-model="itemForm.equipable" />
+                    Is this item equipable?
+                </label>
                 <div class="modal-actions">
                     <button class="cancel-btn" @click="closeItemModal">Cancel</button>
                     <button class="save-btn" @click="saveItem" :disabled="formLoading">
@@ -384,7 +387,7 @@ style.textContent = `
   }
 
   .admin-card {
-    background: var(--card-background);
+    background: #FFFACD;
     padding: 15px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
@@ -412,7 +415,7 @@ style.textContent = `
 
   .card-actions button {
     border: 1px solid var(--border-color);
-    background: #FFFACD;
+    background: white;
   }
 
   .card-actions .delete-btn {

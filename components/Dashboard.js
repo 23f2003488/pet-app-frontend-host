@@ -99,7 +99,7 @@ const Dashboard = {
     playBark() {
       const sound = document.getElementById("barkSound");
       if (sound) {
-        sound.volume = 0.3;
+        sound.volume = 0.1;
         sound.currentTime = 0;
         sound.play().catch(() => { });
       }
@@ -115,7 +115,6 @@ const Dashboard = {
 
     if (equippedThemeUrl) { this.dashboardBackground = equippedThemeUrl; }
     
-    // FIX: This now handles URLs from both /accessories/ AND /gifts/
     if (equippedCollarUrl) { 
       this.petImage = equippedCollarUrl.replace('/accessories/', '/pets/').replace('/gifts/', '/pets/');
     } 
@@ -229,13 +228,15 @@ const Dashboard = {
     border: none;
     border-radius: 50%;
     font-size: 1.2rem;
-    width: 32px;
-    height: 32px;
-    margin-top: 550px;
-    margin-left: 8px;
+    width: 40px;
+    height: 40px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    /* CHANGE 1: Positioning the power button to the bottom-left */
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
 }
 
 .power-button:hover {
@@ -369,12 +370,12 @@ const Dashboard = {
     border: 1px solid black;
     width: 110px;
     height: 50px;
-    padding-left: 10px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-left: 1300px;
-    margin-top: 15px;
+    padding: 5px 10px;
     border-radius: 10px;
+    /* CHANGE 2: This positions the stat-box at the top-right */
+    position: absolute;
+    top: 15px;
+    right: 10px;
 }
 
 .big-button.quest-button {
@@ -423,20 +424,20 @@ const Dashboard = {
 .ball-image {
     width: 70px;
     bottom: 20px;
-    right: 270px;
+    right: 20px;
 }
 
 .bowl-image {
     width: 100px;
-    bottom: 30px;
-    left: 330px;
+    bottom: 20px;
+    left: 20px;
 }
 
 .bone-image {
     width: 100px;
-    bottom: 0px;
-    right: 370px;
-    transform: rotate(-25deg);
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-150px) rotate(-25deg);
 }
 
 .overlay-gift-image {
