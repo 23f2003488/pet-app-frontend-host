@@ -439,9 +439,19 @@ style.textContent = `
     max-height:90vh;
     overflow-y:auto;
     position:relative;
-    margin:auto;
-
   }
+    .modal-backdrop {
+    position: fixed; /* stays on top of everything */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;   /* center vertically */
+    justify-content: center; /* center horizontally */
+    z-index: 1000; /* make sure it overlays */
+}
 
   .form-input {
     border: 1px solid var(--border-color);
