@@ -434,7 +434,13 @@ style.textContent = `
     padding: 25px;
     border-radius: var(--border-radius);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border: 2px solid var(--border-color);
+     width:90%;
+    max-width:500px;
+    max-height:90vh;
+    overflow-y:auto;
+    position:relative;
+    margin:auto;
+
   }
 
   .form-input {
