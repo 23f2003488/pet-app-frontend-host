@@ -184,7 +184,7 @@ const AdminDashboard = {
         const data = await response.json();
         this.questions = data.questions || [];
       } catch (error) {
-        alert(error.message);
+        ///alert(error.message);
       }
     },
     async fetchShopItems() {
