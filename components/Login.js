@@ -56,7 +56,7 @@ const Login = {
         }
         
       } catch (error) {
-        alert("❌ Login error1: " + error.message);
+        alert("❌ Login error: " + error.message);
         console.error("Login failed:", error);
       } finally {
         this.loading = false;
