@@ -2,36 +2,36 @@ const Help = {
   template: `
     <div class="help-container">
       <div class="help-box">
-        <h2>📖 Game Guide: Take Care of Your Pet!</h2>
+        <h2> Game Guide: Take Care of Your Pet!</h2>
 
-        <p>Welcome to <strong>Pawket Money</strong> 🐾 – where you care for your pet while learning money skills!</p>
+        <p>Welcome to <strong>Pawket Money</strong> – where you care for your pet while learning money skills!</p>
 
         <ul>
-          <li>💖 <strong>Keep your pet Happy & Fed:</strong><br/>
+          <li> <strong>Keep your pet Happy & Fed:</strong><br/>
             Your pet has <span class="highlight">Hunger</span> and <span class="highlight">Happiness</span> bars.<br/>
-            Don’t let them drop below 10%! Or you’ll lose:<br/>
-            <span class="penalty">❌ -50 XP</span> for Hunger, and <span class="penalty">❌ -50 XP</span> for Happiness!
+            Don’t let either of them drop below 0! Or you’ll lose:<br/>
+            <span class="penalty"> -10 XP</span> for Hunger, and <span class="penalty"> -10 XP</span> for Happiness every 30 minutes!
           </li>
 
-          <li>🧠 <strong>Attempt Quizzes:</strong><br/>
+          <li> <strong>Attempt Quizzes:</strong><br/>
             Earn rewards by playing quizzes!<br/>
-            ✅ <span class="reward">+10 XP</span> and <span class="reward">+20 Coins</span> for every correct answer.<br/>
-            ❌ <span class="penalty">-5 XP</span> for every wrong answer.
+             <span class="reward">+10 XP</span> and <span class="reward">+20 Coins</span> for every correct answer.<br/>
+             <span class="penalty">-5 XP</span> for every wrong answer.
           </li>
 
-          <li>🛍️ <strong>Visit the Shop:</strong><br/>
-            Buy food to refill the Hunger bar 🍎<br/>
-            Buy costumes & accessories 🎩 to cheer up your pet!
+          <li> <strong>Visit the Shop:</strong><br/>
+            Buy food to refill the Hunger bar <br/>
+            Buy costumes & accessories to cheer up your pet!
           </li>
 
-          <li>🎁 <strong>Unlock Surprise Gifts:</strong><br/>
+          <li> <strong>Unlock Surprise Gifts:</strong><br/>
             Complete <span class="highlight">500 XP</span>, <span class="highlight">1000 XP</span>, etc. to unlock special rewards!<br/>
            
           </li>
 
-          <li>🎯 <strong>What’s Your Goal?</strong><br/>
-            Keep your pet happy, smart, and stylish! 😎<br/>
-            Master your XP and Coins like a money hero! 💰🧠
+          <li> <strong>What’s Your Goal?</strong><br/>
+            Keep your pet happy, smart, and stylish! <br/>
+            Master your XP and Coins like a money hero!
           </li>
         </ul>
 

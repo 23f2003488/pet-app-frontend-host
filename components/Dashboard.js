@@ -99,6 +99,7 @@ const Dashboard = {
     playBark() {
       const sound = document.getElementById("barkSound");
       if (sound) {
+        sound.volume = 0.3;
         sound.currentTime = 0;
         sound.play().catch(() => { });
       }
@@ -230,7 +231,7 @@ const Dashboard = {
     font-size: 1.2rem;
     width: 32px;
     height: 32px;
-    margin-top: 508px;
+    margin-top: 550px;
     margin-left: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     cursor: pointer;
@@ -371,8 +372,8 @@ const Dashboard = {
     padding-left: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
-    margin-left: 1200px;
-    margin-top: 20px;
+    margin-left: 1300px;
+    margin-top: 15px;
     border-radius: 10px;
 }
 

@@ -117,10 +117,7 @@ const AdminDashboard = {
                 <input class="form-input" v-model.number="itemForm.hunger_effect" placeholder="Hunger Effect" type="number" />
                 <input class="form-input" v-model.number="itemForm.happiness_effect" placeholder="Happiness Effect" type="number" />
                 <input class="form-input" v-model="itemForm.image_url" placeholder="Image URL" />
-                <label class="checkbox-label">
-                    <input type="checkbox" v-model="itemForm.equipable" />
-                    Is this item equipable?
-                </label>
+                
                 <div class="modal-actions">
                     <button class="cancel-btn" @click="closeItemModal">Cancel</button>
                     <button class="save-btn" @click="saveItem" :disabled="formLoading">
@@ -197,7 +194,7 @@ const AdminDashboard = {
         const data = await response.json();
         this.shopItems = Object.values(data).flat();
       } catch (error) {
-        ///alert(error.message);
+        alert(error.message);
       }
     },
     openAddQuestionModal() {
@@ -349,7 +346,7 @@ style.textContent = `
   }
   .admin-container {
     padding: 20px;
-    background-color: var(--background-color);
+    background-color: #DFFFD6;
     font-family: 'Comic Sans MS', cursive, sans-serif;
     color: var(--text-color);
     min-height: 100vh;
@@ -415,7 +412,7 @@ style.textContent = `
 
   .card-actions button {
     border: 1px solid var(--border-color);
-    background: #f9f9f9;
+    background: #FFFACD;
   }
 
   .card-actions .delete-btn {
